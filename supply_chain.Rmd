@@ -1,0 +1,133 @@
+---
+title: "supply chain optimization"
+author: "sirius_ife"
+date: "2024-10-17"
+output: html_document
+---
+
+## packages
+
+```{r packages,results="hide",message=FALSE,warning=FALSE}
+
+# Libraries
+library(dplyr)
+library(ggplot2)
+
+```
+
+## Generating Data
+
+```{r generate,}
+
+# Generate demand forecasts 
+set.seed(123)
+routes <- c("Route A", "Route B", "Route C")
+months <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun")
+demand_data <- data.frame(
+  Route = sample(routes, 100, replace = TRUE),
+  Month = sample(months, 100, replace = TRUE),
+  Demand = round(rnorm(100, mean = 100, sd = 20))
+)
+
+# Generate operational costs 
+fuel_cost <- rnorm(length(routes), mean = 2, sd = 0.2)  # fuel cost per mile/km
+labor_cost <- rnorm(length(routes), mean = 20, sd = 5)   # labor cost per hour
+maintenance_cost <- rnorm(length(routes), mean = 500, sd = 100)  # maintenance cost per vehicle
+
+operational_costs <- data.frame(
+  Route = routes,
+  Fuel_Cost = fuel_cost,
+  Labor_Cost = labor_cost,
+  Maintenance_Cost = maintenance_cost
+)
+
+# Example route capacities and constraints (static data)
+route_capacities <- data.frame(
+  Route = routes,
+  Capacity_Tons = c(20, 30, 25),  # Example capacity in tons
+  Capacity_Volume = c(100, 150, 120)  # Example capacity in cubic meters
+)
+
+```
+
+## Demand Analysis
+
+```{r demand analysis,warning=FALSE, message=FALSE}
+
+# Convert Month to a factor with the levels in the correct order
+demand_data$Month <- factor(demand_data$Month, levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun"))
+
+# Summary statistics for demand per route
+demand_summary <- demand_data %>%
+  group_by(Route) %>%
+  summarise(
+    Mean_Demand = mean(Demand),
+    Median_Demand = median(Demand),
+    SD_Demand = sd(Demand),
+    Total_Demand = sum(Demand)
+  )
+
+print(demand_summary)
+
+# Monthly demand trends for each route
+monthly_demand <- demand_data %>%
+  group_by(Route, Month) %>%
+  summarise(Total_Demand = sum(Demand))
+
+# Plot monthly demand trends
+ggplot(monthly_demand, aes(x = Month, y = Total_Demand, color = Route, group = Route)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 2) +
+  labs(title = "Monthly Demand Trends per Route",
+       x = "Month",
+       y = "Total Demand") +
+  theme_minimal()
+
+```
+
+## Operational Cost Analysis
+
+```{r operational cost analysis,}
+
+# Calculate total operational costs per route
+operational_costs <- operational_costs %>%
+  mutate(Total_Cost = Fuel_Cost + Labor_Cost + Maintenance_Cost)
+
+print(operational_costs)
+
+# Plot total costs per route
+ggplot(operational_costs, aes(x = Route, y = Total_Cost, fill = Route)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Total Operational Costs per Route",
+       x = "Route",
+       y = "Total Cost") +
+  theme_minimal()
+
+```
+
+## Capacity Utilization Analysis
+
+```{r capacity utilization analysis,}
+
+# Join demand data with route capacities
+capacity_utilization <- demand_summary %>%
+  left_join(route_capacities, by = "Route") %>%
+  mutate(
+    Utilization_Tons = (Total_Demand / Capacity_Tons) * 100,  # Utilization in percentage
+    Utilization_Volume = (Total_Demand / Capacity_Volume) * 100
+  )
+
+print(capacity_utilization)
+
+# Plot capacity utilization
+ggplot(capacity_utilization, aes(x = Route)) +
+  geom_bar(aes(y = Utilization_Tons, fill = "Tons"), stat = "identity", position = "dodge") +
+  geom_bar(aes(y = Utilization_Volume, fill = "Volume"), stat = "identity", position = "dodge") +
+  labs(title = "Capacity Utilization per Route (Tons vs Volume)",
+       x = "Route",
+       y = "Utilization (%)") +
+  scale_fill_manual(values = c("Tons" = "blue", "Volume" = "red")) +
+  theme_minimal()
+
+```
+

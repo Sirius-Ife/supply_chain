@@ -1,0 +1,38 @@
+
+ 1. Demand Forecast Data
+
+| Field Name | Description                                    | Data Type | Example Values     |
+|----------------|----------------------------------------------------|---------------|------------------------|
+| `Route`        | Identifier for the route where logistics services are provided (categorical variable). | Factor        | "Route A", "Route B"    |
+| `Month`        | The month during which demand is measured.         | Factor        | "Jan", "Feb", "Mar"     |
+| `Demand`       | The total demand (number of shipments) for the route in the specified month. | Integer       | 100, 120, 95            |
+
+- Dataset Context: This dataset represents the estimated or simulated demand forecasts for different routes over a six-month period. It helps analyze monthly trends in demand across different logistics routes.
+
+ 2. Operational Costs Data
+
+| Field Name     | Description                                   | Data Type | Example Values   |
+|--------------------|---------------------------------------------------|---------------|----------------------|
+| `Route`            | Identifier for the route where logistics services are provided. | Factor        | "Route A", "Route B"  |
+| `Fuel_Cost`        | The average cost of fuel per mile or kilometer for each route (in USD or local currency). | Numeric       | 2.10, 2.05            |
+| `Labor_Cost`       | The average labor cost per hour for drivers operating on the route (in USD or local currency). | Numeric       | 22.5, 19.8            |
+| `Maintenance_Cost` | The average cost of vehicle maintenance per route (in USD or local currency). | Numeric       | 550, 475              |
+| `Total_Cost`       | The total operational cost for the route (sum of fuel, labor, and maintenance costs). | Numeric       | 574.6, 496.85         |
+
+- Dataset Context: This dataset provides the operational costs associated with running logistics services on specific routes. It includes key cost components such as fuel, labor, and maintenance, along with the total cost for each route.
+
+ 3. Route Capacity Data
+
+| Field Name     | Description                                   | Data Type | Example Values   |
+|--------------------|---------------------------------------------------|---------------|----------------------|
+| `Route`            | Identifier for the route where logistics services are provided. | Factor        | "Route A", "Route B"  |
+| `Capacity_Tons`    | The maximum cargo weight that can be transported on the route (in tons). | Numeric       | 20, 30                |
+| `Capacity_Volume`  | The maximum cargo volume that can be transported on the route (in cubic meters). | Numeric       | 100, 150              |
+
+- Dataset Context: This dataset describes the maximum capacities of different logistics routes in terms of weight (tons) and volume (cubic meters). It helps in understanding the constraints related to the maximum cargo each route can handle.
+
+ Metadata Overview:
+
+- Dataset Purpose: These datasets are used for analyzing demand, costs, and capacities in logistics operations to aid in pricing optimization and efficiency improvements.
+- Units of Measure: Costs are assumed to be in USD or local currency, weight is measured in tons, and volume is measured in cubic meters.
+- Time Frame: The demand dataset covers a six-month period (Jan–Jun), and operational costs are assumed to be average or periodic values relevant to logistics operations.
